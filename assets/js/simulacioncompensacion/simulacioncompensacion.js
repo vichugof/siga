@@ -76,6 +76,7 @@ function init(url_simindividual, url_simular){
             request.error(function (data) {
                 document.getElementById("message").textContent = data.text;
                 document.getElementById('loading').style.display = 'none';
+                $scope.simulaciones = [];
             });
         },
         $scope.quitarArbol = function ($event, $index) {

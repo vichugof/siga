@@ -41,7 +41,28 @@ class Simulacioncompensacion extends CI_Controller{
                 $idsArboles=array_map('trim',$idsArboles);
                 $idArbol = $idsArboles;
             }
-
+            
+            /*
+             * Si la cadena de texto termina en coma y se crear un valor null de último
+             */
+            if($idArbol[count($idArbol)-1] === NULL || $idArbol[count($idArbol)-1] === ''){
+                unset($idArbol[count($idArbol)-1]);
+            }
+            
+            /*
+             * Validar que los ids sean de tipo integer
+             */
+            if(in_array(false, array_map(function($id){return is_numeric($id);}, $idArbol))){
+                return $this->output
+                    ->set_content_type('application/json')
+                    ->set_status_header(500)
+                    ->set_output(json_encode(array(
+                        'text' => 'Error, los criterios de búsqueda deben ser de tipo númerico.',
+                        'type' => 'danger'
+                    )));
+            }
+            
+            
             $result = $this->darbol->get_by_id($idArbol);
             if(count($result) > 0){
 
@@ -65,7 +86,7 @@ class Simulacioncompensacion extends CI_Controller{
             ->set_content_type('application/json')
             ->set_status_header(500)
             ->set_output(json_encode(array(
-                'text' => 'Error, no se enviaron parámetros. El árbol no se encontró.',
+                'text' => 'Error, no se enviaron parámetros o el árbol no se encontró.',
                 'type' => 'danger'
             )));
         
