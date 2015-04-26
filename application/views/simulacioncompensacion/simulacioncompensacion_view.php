@@ -14,7 +14,8 @@ and open the template in the editor.
         
     </head>
     <script>
-        init('<?php echo site_url('simindividual');?>', '<?php echo site_url('simular');?>');
+//        init('<?php // echo site_url('simindividual');?>', '<?php // echo site_url('simular');?>');
+        init('<?php echo site_url('');?>');
     </script>
     <body>
         <!--<div id="container" class="row" style="padding-left: 5px; padding-right: 5px;">-->
@@ -33,6 +34,7 @@ and open the template in the editor.
                     <button class="btn btn-primary" ng-click="check_credentials()">Consultar</button>
                     <button class="btn btn-default btn-lg" ng-click="simular()">Simular</button>
                     <button class="btn btn-default" ng-click="limpiar()">Limpiar</button>
+                    <button class="btn btn-default" ng-click="print()">Imprimir Simulación</button>
                     <span id="message"></span>
                 </div>
                 <div id="loading" class="col-md-2" style="display: none;">

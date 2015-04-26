@@ -1,6 +1,7 @@
 
 
-function init(url_simindividual, url_simular){
+//function init(url_simindividual, url_simular){
+function init(url){
     
     var app = angular.module('angular_post_demo', []);
     
@@ -30,7 +31,8 @@ function init(url_simindividual, url_simular){
 
             var request = $http({
                 method: "post",
-                url: url_simindividual,
+//                url: url_simindividual,
+                url: url+'/simindividual',
                 data: {
 
                     idsArbol:$scope.idsArbol,
@@ -56,7 +58,8 @@ function init(url_simindividual, url_simular){
             document.getElementById('loading').style.display = 'block';
             var request = $http({
                 method: "post",
-                url: url_simular,
+//                url: url_simular,
+                url: url+'/simular',
                 data: {
                     arboles:$scope.posts,
                 },
@@ -87,6 +90,31 @@ function init(url_simindividual, url_simular){
             $scope.posts = [];
             document.getElementById("message").textContent = '';
             document.getElementById('loading').style.display = 'none';
+        },
+        $scope.print = function () {
+            document.getElementById('loading').style.display = 'block';
+            var request = $http({
+                method: "get",
+                url: url+'/imprimir/simulacion/'+$scope.numsilumacion,
+//                data: {
+//                    codigo: data.silumacion,
+//                },
+                headers: {'Content-Type': 'application/x-www-form-urlencoded', responseType: 'arraybuffer'},
+                
+            });
+            request.success(function (data) {
+                document.getElementById("message").textContent = data.text;
+//                console.log(data.response);
+                var file = new Blob([data], { type: 'application/pdf' });
+                var fileURL = URL.createObjectURL(file);
+                window.open(fileURL);
+                document.getElementById('loading').style.display = 'none';
+
+            });
+            request.error(function (data) {
+                document.getElementById("message").textContent = data.text;
+                document.getElementById('loading').style.display = 'none';
+            });
         }
     });
 }

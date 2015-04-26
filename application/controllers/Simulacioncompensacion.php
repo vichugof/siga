@@ -156,5 +156,78 @@ class Simulacioncompensacion extends CI_Controller{
             )));
         
     }
+    
+    public function imprimir_simulacion($codigo){
+        $parametros = $this->get_arreglo_configuracion_pdf();
+        $this->load->library('pdf', $parametros['parameters']); 
+        $simulaciones = $this->simulacion->get_by_codigo($codigo);
+        if(count($simulaciones) > 0){
+            $dataTable = array();
+            $total = 0;
+            foreach($simulaciones as $simulacion){
+                $dataTable[] = array(
+                    'codigo'                => $simulacion->codigo,
+                    'nombrecomun'           => $simulacion->nombrecomun,
+                    'cantidadnombrecomun'   => $simulacion->cantidadnombrecomun,
+                    'fecharegistro'         => date('Y-d-m', strtotime($simulacion->fecharegistro)),
+                    'valor'                 => number_format($simulacion->valor),
+                );
+                $total += $simulacion->valor;
+            }
+            
+           $this->load->view('simulacioncompensacion/imprimir_simulacion_pdf', 
+                array(   
+                    'data' => $dataTable, 
+                    'dataTotal'=> array(
+                                        0 => array( 'fecharegistro' => '<b>TOTAL</b>', 
+                                                    'valor'         => '<b>'.number_format($total).'</b>'
+                                                )
+                                        ),
+                    'codigo' => $codigo, 
+                    'parametros' => $parametros
+                )
+            );
+           return;
+        }
+        return $this->output
+            ->set_content_type('application/json')
+            ->set_status_header(404)
+            ->set_output(json_encode(array(
+                    'text' => "Error, no se encontró la simulación con el código {$codigo}",
+                    'type' => 'danger'
+            )));
+    }
+    
+    private function get_arreglo_configuracion_pdf(){
+        
+        $piePagina = 'Este proceso es una simulación no definitiva y no constituye un recibo de pago u obligación, su propósito es orientar acerca de los costos posibles para un proyecto que amerite compensacion silvicultural , para mayor información remitirse a las oficinas del DAGMA con este documento.';
+        $titulo = 'Simulación costo compensación silvicultural';
+        $header = 'El resultado de su consulta es:';
+        $logo = 'assets/img/siga114.jpg';
+
+        $parameters=array(
+            'paper'         =>'letter',   //paper size
+            'orientation'   =>'portrait',  //portrait or lanscape
+            'type'          =>'color',   //paper type: none|color|colour|image
+            'options'       =>array(1, 1, 1) //I specified the paper as color paper, so, here's the paper color (RGB)
+        );
+        $columnHeader=array(
+            'codigo'                =>'<b>Código</b>',
+            'nombrecomun'           =>'<b>Nombre Común</b>',
+            'cantidadnombrecomun'   =>'<b>Cantidad</b>',
+            'fecharegistro'         =>'<b>Fecha de Registro</b>',
+            'valor'                 =>'<b>Valor</b>',
+        );
+        return array(
+            'parameters'    => $parameters,
+            'columnHeader'  => $columnHeader,
+            'titulo'        => $titulo,
+            'header'        => $header,
+            'logo'          => $logo,
+            'piePagina'     => $piePagina,
+        );
+        
+        
+    }
 }
 
