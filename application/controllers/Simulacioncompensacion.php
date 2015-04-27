@@ -10,11 +10,10 @@ class Simulacioncompensacion extends CI_Controller{
             $this->load->helper('url');
             $this->load->helper('form');
             $this->load->helper('html');
-            
+            $this->load->library('session');
             $this->load->model('d_arbol_model', 'darbol');
             $this->load->model('Simulacioncompensacion_model', 'simulacion');
     }
-    
 
     public function output($view, $output = null)
     {
@@ -22,9 +21,12 @@ class Simulacioncompensacion extends CI_Controller{
     }
         
     public function index(){
+        $message = $this->session->flashdata('message');
+        
         $data = array(
-            'valorIndiviualArbol' =>   $this->simulacion->get_valor_indiviual_arbol(),
-            'smdlv'               =>   $this->simulacion->get_smdlv(),
+            'valorIndiviualArbol' => $this->simulacion->get_valor_indiviual_arbol(),
+            'smdlv'               => $this->simulacion->get_smdlv(),
+            'message'             => $message
         );
         $this->output('simulacioncompensacion/simulacioncompensacion_view', $data);
     }
@@ -41,7 +43,27 @@ class Simulacioncompensacion extends CI_Controller{
                 $idsArboles=array_map('trim',$idsArboles);
                 $idArbol = $idsArboles;
             }
-
+            
+            /*
+             * Si la cadena de texto termina en coma y se crear un valor null de último
+             */
+            if($idArbol[count($idArbol)-1] === NULL || $idArbol[count($idArbol)-1] === ''){
+                unset($idArbol[count($idArbol)-1]);
+            }
+            
+            /*
+             * Validar que los ids sean de tipo integer
+             */
+            if(in_array(false, array_map(function($id){return is_numeric($id);}, $idArbol))){
+                return $this->output
+                    ->set_content_type('application/json')
+                    ->set_status_header(500)
+                    ->set_output(json_encode(array(
+                        'text' => 'Error, los criterios de búsqueda deben ser de tipo númerico.',
+                        'type' => 'danger'
+                    )));
+            }
+            
             $result = $this->darbol->get_by_id($idArbol);
             if(count($result) > 0){
 
@@ -65,7 +87,7 @@ class Simulacioncompensacion extends CI_Controller{
             ->set_content_type('application/json')
             ->set_status_header(500)
             ->set_output(json_encode(array(
-                'text' => 'Error, no se enviaron parámetros. El árbol no se encontró.',
+                'text' => 'Error, no se enviaron parámetros o el árbol no se encontró.',
                 'type' => 'danger'
             )));
         
@@ -133,7 +155,73 @@ class Simulacioncompensacion extends CI_Controller{
                     'text' => 'Error, no se enviaron parámetros',
                     'type' => 'danger'
             )));
+    }
+    
+    public function imprimir_simulacion($codigo){
+        $parametros = $this->_get_arreglo_configuracion_pdf();
+        $this->load->library('pdf', $parametros['parameters']); 
+        $simulaciones = $this->simulacion->get_by_codigo($codigo);
+        if(count($simulaciones) > 0){
+            $data_table = array();
+            $total = 0;
+            foreach($simulaciones as $simulacion){
+                $data_table[] = array(
+                    'codigo'                => $simulacion->codigo,
+                    'nombrecomun'           => $simulacion->nombrecomun,
+                    'cantidadnombrecomun'   => $simulacion->cantidadnombrecomun,
+                    'fecharegistro'         => date('Y-d-m', strtotime($simulacion->fecharegistro)),
+                    'valor'                 => number_format($simulacion->valor),
+                );
+                $total += $simulacion->valor;
+            }
+            
+            $this->load->view('simulacioncompensacion/imprimir_simulacion_pdf', 
+                array(   
+                    'data' => $data_table, 
+                    'data_total'=> 
+                        array(
+                            0 => array( 'nombrecomun' => '<b>TOTAL</b>', 
+                                        'valor' => '<b>'.number_format($total).'</b>'
+                                )
+                    ),
+                    'codigo'     => $codigo, 
+                    'parametros' => $parametros
+                )
+            );
+           return;
+        }
+        $this->session->set_flashdata('message', "Error, no se encontró la simulación con el código {$codigo}");
+        redirect( 'simulacion' );
+    }
+    
+    private function _get_arreglo_configuracion_pdf(){
         
+        $pie_pagina = 'Este proceso es una simulación no definitiva y no constituye un recibo de pago u obligación, su propósito es orientar acerca de los costos posibles para un proyecto que amerite compensacion silvicultural , para mayor información remitirse a las oficinas del DAGMA con este documento.';
+        $titulo = 'Simulación costo compensación silvicultural';
+        $header = 'El resultado de su consulta es:';
+        $logo = 'assets/img/siga114.jpg';
+
+        $parameters=array(
+            'paper'         =>'letter',   //paper size
+            'orientation'   =>'portrait',  //portrait or lanscape
+            'type'          =>'color',   //paper type: none|color|colour|image
+            'options'       =>array(1, 1, 1) //I specified the paper as color paper, so, here's the paper color (RGB)
+        );
+        $column_header=array(
+            'nombrecomun'           =>'<b>Nombre Común</b>',
+            'cantidadnombrecomun'   =>'<b>Número de Árboles</b>',
+            'valor'                 =>'<b>Total Nombre Común</b>',
+            'codigo'                =>'<b>Simulación',
+            'fecharegistro'         =>'</b><b>Fecha</b>',
+        );
+        return array(
+            'parameters'    => $parameters,
+            'column_header' => $column_header,
+            'titulo'        => $titulo,
+            'header'        => $header,
+            'logo'          => $logo,
+            'pie_pagina'    => $pie_pagina,
+        );
     }
 }
 

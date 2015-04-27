@@ -229,4 +229,20 @@ class Simulacioncompensacion_model extends CI_Model  {
         }
         return FALSE;
     }
+    
+    public function get_by_codigo($codigo){
+        if($codigo !== ''){
+            $query = $this->db
+                    ->select('simulacioncompensacion.codigo, '
+                            . 'b_nombrecomun.nombrecomun,'
+                            . 'simulacioncompensacion.cantidadnombrecomun, '
+                            . 'simulacioncompensacion.fecharegistro, '
+                            . 'simulacioncompensacion.valor')
+                    ->join('b_nombrecomun', 'b_nombrecomun.idnombrecomun = simulacioncompensacion.idnombrecomun')
+                    ->where('simulacioncompensacion.codigo', $codigo)
+                    ->get('simulacioncompensacion');
+            return $query->result();    
+        }
+        return FALSE;
+    }
 }

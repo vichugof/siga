@@ -43,3 +43,4 @@ application/views/welcome_message.php
 application/views/errors/*
 index.php
 license.txt
+*~
