@@ -3,7 +3,7 @@
 $this->pdf->selectFont(APPPATH.'third_party/pdf-php/fonts/Helvetica.afm');  //choose font, watch out for the dont location!
 
 
-$columnHeader = $parametros['columnHeader'];
+$column_header = $parametros['column_header'];
 
 $options = array(
             'shadeCol'=>array(0.8,0.8,0.8),                                       
@@ -24,13 +24,13 @@ $this->pdf->ezText($parametros['titulo'],20,array('justification'=>'center'));  
 $this->pdf->ezText('');  //espcio entre texto
 $this->pdf->ezText($parametros['header'],14,array('justification'=>'left'));  //insert text with size
 $this->pdf->ezText('');  //espcio entre texto
-$this->pdf->ezTable($data, $columnHeader,'',$options); //generate table
+$this->pdf->ezTable($data, $column_header,'',$options); //generate table
 $this->pdf->ezText('');  //espcio entre texto
-$this->pdf->ezText($parametros['piePagina'],14,array('justification'=>'center'));  //insert text with size
-$this->pdf->ezText("\n");
 $options['showHeadings'] = 0; $options['showLines'] = 0;
+$this->pdf->ezTable($data_total, $column_header,'',$options); //generate table
+$this->pdf->ezText("\n");
+$this->pdf->ezText($parametros['pie_pagina'],14,array('justification'=>'center'));  //insert text with size
 
-$this->pdf->ezTable($dataTotal, $columnHeader,'',$options); //generate table
+$optionsFile = array('Content-Disposition' => "simulacion{$codigo}.pdf", 'download' => 1, 'compress' => 1);
 
-$optionsFile = array('Content-Disposition' => "simulacion{$codigo}.pdf");
 $this->pdf->ezStream($optionsFile);

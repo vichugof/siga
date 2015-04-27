@@ -16,7 +16,7 @@ function init(url){
             return totalCompensacion;
         };
     })
-    .controller('sign_up', function ($scope, $http) {
+    .controller('sign_up', function ($scope, $http, $log, $sce) {
         /*
         * This method will be called on click event of button.
         * Here we will read the email and password value and call our PHP file.
@@ -92,29 +92,25 @@ function init(url){
             document.getElementById('loading').style.display = 'none';
         },
         $scope.print = function () {
-            document.getElementById('loading').style.display = 'block';
-            var request = $http({
-                method: "get",
-                url: url+'/imprimir/simulacion/'+$scope.numsilumacion,
-//                data: {
-//                    codigo: data.silumacion,
-//                },
-                headers: {'Content-Type': 'application/x-www-form-urlencoded', responseType: 'arraybuffer'},
-                
-            });
-            request.success(function (data) {
-                document.getElementById("message").textContent = data.text;
-//                console.log(data.response);
-                var file = new Blob([data], { type: 'application/pdf' });
-                var fileURL = URL.createObjectURL(file);
-                window.open(fileURL);
-                document.getElementById('loading').style.display = 'none';
-
-            });
-            request.error(function (data) {
-                document.getElementById("message").textContent = data.text;
-                document.getElementById('loading').style.display = 'none';
-            });
+            window.open(url+'/imprimir/simulacion/'+$scope.numsilumacion, "_self", "width=200, height=100", false);
+            
+            
+//            var request = $http({
+//                method: "post",
+//                url: url+'/imprimir/simulacion/'+$scope.numsilumacion,
+//                headers: {'Content-Type': 'application/x-www-form-urlencoded', responseType: 'arraybuffer'},
+//                
+//            });
+//            request.success(function (data) {
+//                var file = new Blob([data], { type: 'application/pdf' });
+//                var fileURL = URL.createObjectURL(file);
+//                window.open(fileURL);
+//                document.getElementById('loading').style.display = 'none';
+//            });
+//            request.error(function (data) {
+//                document.getElementById("message").textContent = data.text;
+//                document.getElementById('loading').style.display = 'none';
+//            });
         }
     });
 }

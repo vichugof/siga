@@ -11,6 +11,8 @@ class Simulacioncompensacion extends CI_Controller{
             $this->load->helper('form');
             $this->load->helper('html');
             
+            $this->load->library('session');
+            
             $this->load->model('d_arbol_model', 'darbol');
             $this->load->model('Simulacioncompensacion_model', 'simulacion');
     }
@@ -22,9 +24,12 @@ class Simulacioncompensacion extends CI_Controller{
     }
         
     public function index(){
+        $message = $this->session->flashdata('message');
+        
         $data = array(
-            'valorIndiviualArbol' =>   $this->simulacion->get_valor_indiviual_arbol(),
-            'smdlv'               =>   $this->simulacion->get_smdlv(),
+            'valorIndiviualArbol' => $this->simulacion->get_valor_indiviual_arbol(),
+            'smdlv'               => $this->simulacion->get_smdlv(),
+            'message'             => $message
         );
         $this->output('simulacioncompensacion/simulacioncompensacion_view', $data);
     }
@@ -158,14 +163,14 @@ class Simulacioncompensacion extends CI_Controller{
     }
     
     public function imprimir_simulacion($codigo){
-        $parametros = $this->get_arreglo_configuracion_pdf();
+        $parametros = $this->_get_arreglo_configuracion_pdf();
         $this->load->library('pdf', $parametros['parameters']); 
         $simulaciones = $this->simulacion->get_by_codigo($codigo);
         if(count($simulaciones) > 0){
-            $dataTable = array();
+            $data_table = array();
             $total = 0;
             foreach($simulaciones as $simulacion){
-                $dataTable[] = array(
+                $data_table[] = array(
                     'codigo'                => $simulacion->codigo,
                     'nombrecomun'           => $simulacion->nombrecomun,
                     'cantidadnombrecomun'   => $simulacion->cantidadnombrecomun,
@@ -177,8 +182,8 @@ class Simulacioncompensacion extends CI_Controller{
             
            $this->load->view('simulacioncompensacion/imprimir_simulacion_pdf', 
                 array(   
-                    'data' => $dataTable, 
-                    'dataTotal'=> array(
+                    'data' => $data_table, 
+                    'data_total'=> array(
                                         0 => array( 'fecharegistro' => '<b>TOTAL</b>', 
                                                     'valor'         => '<b>'.number_format($total).'</b>'
                                                 )
@@ -189,18 +194,26 @@ class Simulacioncompensacion extends CI_Controller{
             );
            return;
         }
-        return $this->output
-            ->set_content_type('application/json')
-            ->set_status_header(404)
-            ->set_output(json_encode(array(
-                    'text' => "Error, no se encontró la simulación con el código {$codigo}",
-                    'type' => 'danger'
-            )));
+        $this->session->set_flashdata('message', "Error, no se encontró la simulación con el código {$codigo}");
+        redirect( 'simulacion' );
+//        $this->output('simulacioncompensacion/simulacioncompensacion_view', array(
+//            'codigo' =>   $codigo,
+//            'message'=>   "Error, no se encontró la simulación con el código {$codigo}",
+//            'valorIndiviualArbol' =>   $this->simulacion->get_valor_indiviual_arbol(),
+//            'smdlv'               =>   $this->simulacion->get_smdlv(),
+//        ));
+//        return $this->output
+//            ->set_content_type('application/json')
+//            ->set_status_header(404)
+//            ->set_output(json_encode(array(
+//                    'text' => "Error, no se encontró la simulación con el código {$codigo}",
+//                    'type' => 'danger'
+//            )));
     }
     
-    private function get_arreglo_configuracion_pdf(){
+    private function _get_arreglo_configuracion_pdf(){
         
-        $piePagina = 'Este proceso es una simulación no definitiva y no constituye un recibo de pago u obligación, su propósito es orientar acerca de los costos posibles para un proyecto que amerite compensacion silvicultural , para mayor información remitirse a las oficinas del DAGMA con este documento.';
+        $pie_pagina = 'Este proceso es una simulación no definitiva y no constituye un recibo de pago u obligación, su propósito es orientar acerca de los costos posibles para un proyecto que amerite compensacion silvicultural , para mayor información remitirse a las oficinas del DAGMA con este documento.';
         $titulo = 'Simulación costo compensación silvicultural';
         $header = 'El resultado de su consulta es:';
         $logo = 'assets/img/siga114.jpg';
@@ -211,7 +224,7 @@ class Simulacioncompensacion extends CI_Controller{
             'type'          =>'color',   //paper type: none|color|colour|image
             'options'       =>array(1, 1, 1) //I specified the paper as color paper, so, here's the paper color (RGB)
         );
-        $columnHeader=array(
+        $column_header=array(
             'codigo'                =>'<b>Código</b>',
             'nombrecomun'           =>'<b>Nombre Común</b>',
             'cantidadnombrecomun'   =>'<b>Cantidad</b>',
@@ -220,11 +233,11 @@ class Simulacioncompensacion extends CI_Controller{
         );
         return array(
             'parameters'    => $parameters,
-            'columnHeader'  => $columnHeader,
+            'column_header' => $column_header,
             'titulo'        => $titulo,
             'header'        => $header,
             'logo'          => $logo,
-            'piePagina'     => $piePagina,
+            'pie_pagina'    => $pie_pagina,
         );
         
         

@@ -56,3 +56,4 @@ $route['conceptofactor'] = "conceptofactor/index";
 $route['simular'] = "simulacioncompensacion/calcular";
 $route['simindividual'] = "simulacioncompensacion/consultar";
 $route['imprimir/simulacion/(:num)'] = "simulacioncompensacion/imprimir_simulacion/$1";
+$route['simulacion'] = "simulacioncompensacion/index";

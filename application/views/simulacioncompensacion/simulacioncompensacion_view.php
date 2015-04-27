@@ -26,21 +26,22 @@ and open the template in the editor.
             <!--<div class="table-responsive" id="login" ng-app='angular_post_demo' ng-controller='sign_up'>-->
             <div id="login" ng-app='angular_post_demo' ng-controller='sign_up'>
                 <div class="form-group">
+                    <label for="numsilumacion"> C&oacute;digo Simulaci&oacute;n: </label>
+                    <input class="form-control" id="numsilumacion" type="text" ng-model="numsilumacion" value="<?php echo (isset($codigo)) ? $codigo : ''; ?>">
                     <label for="idArbol"> Identificadores de &Aacute;rbol para simular compensaci&oacute;n (Separados por comas (,)): </label>
                     <textarea class="form-control" id="idArbol" cols="88" type="text" size="40" ng-model="idsArbol"></textarea>
-                   
+                    
                 </div>
                 <div id="controllers" class="col-md-6">
                     <button class="btn btn-primary" ng-click="check_credentials()">Consultar</button>
                     <button class="btn btn-default btn-lg" ng-click="simular()">Simular</button>
                     <button class="btn btn-default" ng-click="limpiar()">Limpiar</button>
                     <button class="btn btn-default" ng-click="print()">Imprimir Simulación</button>
-                    <span id="message"></span>
+                    <span id="message"><?php echo (isset($message) && $message !== NULL) ? $message : ''; ?></span>
                 </div>
                 <div id="loading" class="col-md-2" style="display: none;">
                     <img height="34" src="<?php echo base_url('assets/img/loading.gif');?>">
                 </div>
-                
                 <div class="col-md-12 table-responsive" style="margin-top: 5px;">
                     <table class="table table-condensed">
                         <caption> Informaci&oacute;n General</caption>
