@@ -74,11 +74,13 @@ function init(url){
                 $scope.numsilumacion = data.silumacion;
                 $scope.fecha = data.fecha;
                 document.getElementById('loading').style.display = 'none';
+                document.getElementById('imprimir_simulacion').disabled = false;
 
             });
             request.error(function (data) {
                 document.getElementById("message").textContent = data.text;
                 document.getElementById('loading').style.display = 'none';
+                document.getElementById('imprimir_simulacion').disabled = true;
                 $scope.simulaciones = [];
             });
         },
@@ -90,6 +92,7 @@ function init(url){
             $scope.posts = [];
             document.getElementById("message").textContent = '';
             document.getElementById('loading').style.display = 'none';
+            document.getElementById('imprimir_simulacion').disabled = true;
         },
         $scope.print = function () {
             window.open(url+'/imprimir/simulacion/'+$scope.numsilumacion, "_self", "width=200, height=100", false);

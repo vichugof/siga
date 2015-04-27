@@ -10,13 +10,10 @@ class Simulacioncompensacion extends CI_Controller{
             $this->load->helper('url');
             $this->load->helper('form');
             $this->load->helper('html');
-            
             $this->load->library('session');
-            
             $this->load->model('d_arbol_model', 'darbol');
             $this->load->model('Simulacioncompensacion_model', 'simulacion');
     }
-    
 
     public function output($view, $output = null)
     {
@@ -66,7 +63,6 @@ class Simulacioncompensacion extends CI_Controller{
                         'type' => 'danger'
                     )));
             }
-            
             
             $result = $this->darbol->get_by_id($idArbol);
             if(count($result) > 0){
@@ -159,7 +155,6 @@ class Simulacioncompensacion extends CI_Controller{
                     'text' => 'Error, no se enviaron parámetros',
                     'type' => 'danger'
             )));
-        
     }
     
     public function imprimir_simulacion($codigo){
@@ -180,15 +175,16 @@ class Simulacioncompensacion extends CI_Controller{
                 $total += $simulacion->valor;
             }
             
-           $this->load->view('simulacioncompensacion/imprimir_simulacion_pdf', 
+            $this->load->view('simulacioncompensacion/imprimir_simulacion_pdf', 
                 array(   
                     'data' => $data_table, 
-                    'data_total'=> array(
-                                        0 => array( 'fecharegistro' => '<b>TOTAL</b>', 
-                                                    'valor'         => '<b>'.number_format($total).'</b>'
-                                                )
-                                        ),
-                    'codigo' => $codigo, 
+                    'data_total'=> 
+                        array(
+                            0 => array( 'nombrecomun' => '<b>TOTAL</b>', 
+                                        'valor' => '<b>'.number_format($total).'</b>'
+                                )
+                    ),
+                    'codigo'     => $codigo, 
                     'parametros' => $parametros
                 )
             );
@@ -196,19 +192,6 @@ class Simulacioncompensacion extends CI_Controller{
         }
         $this->session->set_flashdata('message', "Error, no se encontró la simulación con el código {$codigo}");
         redirect( 'simulacion' );
-//        $this->output('simulacioncompensacion/simulacioncompensacion_view', array(
-//            'codigo' =>   $codigo,
-//            'message'=>   "Error, no se encontró la simulación con el código {$codigo}",
-//            'valorIndiviualArbol' =>   $this->simulacion->get_valor_indiviual_arbol(),
-//            'smdlv'               =>   $this->simulacion->get_smdlv(),
-//        ));
-//        return $this->output
-//            ->set_content_type('application/json')
-//            ->set_status_header(404)
-//            ->set_output(json_encode(array(
-//                    'text' => "Error, no se encontró la simulación con el código {$codigo}",
-//                    'type' => 'danger'
-//            )));
     }
     
     private function _get_arreglo_configuracion_pdf(){
@@ -225,11 +208,11 @@ class Simulacioncompensacion extends CI_Controller{
             'options'       =>array(1, 1, 1) //I specified the paper as color paper, so, here's the paper color (RGB)
         );
         $column_header=array(
-            'codigo'                =>'<b>Código</b>',
             'nombrecomun'           =>'<b>Nombre Común</b>',
-            'cantidadnombrecomun'   =>'<b>Cantidad</b>',
-            'fecharegistro'         =>'<b>Fecha de Registro</b>',
-            'valor'                 =>'<b>Valor</b>',
+            'cantidadnombrecomun'   =>'<b>Número de Árboles</b>',
+            'valor'                 =>'<b>Total Nombre Común</b>',
+            'codigo'                =>'<b>Simulación',
+            'fecharegistro'         =>'</b><b>Fecha</b>',
         );
         return array(
             'parameters'    => $parameters,
@@ -239,8 +222,6 @@ class Simulacioncompensacion extends CI_Controller{
             'logo'          => $logo,
             'pie_pagina'    => $pie_pagina,
         );
-        
-        
     }
 }
 

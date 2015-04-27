@@ -14,20 +14,15 @@ and open the template in the editor.
         
     </head>
     <script>
-//        init('<?php // echo site_url('simindividual');?>', '<?php // echo site_url('simular');?>');
         init('<?php echo site_url('');?>');
     </script>
     <body>
-        <!--<div id="container" class="row" style="padding-left: 5px; padding-right: 5px;">-->
         <div class="container-fluid" id="container" >
             <div class="row" >
             <div class="col-md-12">
-               
-            <!--<div class="table-responsive" id="login" ng-app='angular_post_demo' ng-controller='sign_up'>-->
+
             <div id="login" ng-app='angular_post_demo' ng-controller='sign_up'>
                 <div class="form-group">
-                    <label for="numsilumacion"> C&oacute;digo Simulaci&oacute;n: </label>
-                    <input class="form-control" id="numsilumacion" type="text" ng-model="numsilumacion" value="<?php echo (isset($codigo)) ? $codigo : ''; ?>">
                     <label for="idArbol"> Identificadores de &Aacute;rbol para simular compensaci&oacute;n (Separados por comas (,)): </label>
                     <textarea class="form-control" id="idArbol" cols="88" type="text" size="40" ng-model="idsArbol"></textarea>
                     
@@ -36,7 +31,7 @@ and open the template in the editor.
                     <button class="btn btn-primary" ng-click="check_credentials()">Consultar</button>
                     <button class="btn btn-default btn-lg" ng-click="simular()">Simular</button>
                     <button class="btn btn-default" ng-click="limpiar()">Limpiar</button>
-                    <button class="btn btn-default" ng-click="print()">Imprimir Simulación</button>
+                    <button class="btn btn-default" ng-click="print()" id="imprimir_simulacion" disabled="true">Exportar Simulación</button>
                     <span id="message"><?php echo (isset($message) && $message !== NULL) ? $message : ''; ?></span>
                 </div>
                 <div id="loading" class="col-md-2" style="display: none;">
