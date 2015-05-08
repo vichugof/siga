@@ -20,7 +20,7 @@ class D_arbol_model extends CI_Model  {
     function get_by_id($id)
     {
         $query = $this->db
-                ->select('idarbol, b_nombrecomun.idnombrecomun, b_nombrecomun.nombrecomun, p_base, vitalidad, inclinacion, emplazamiento, alt_total, d_interferencia.descripinterferencia AS infraestructura, fact_imp_eco')
+                ->select('d_arbol.idarbol, d_arbol.idarbol2, b_nombrecomun.idnombrecomun, b_nombrecomun.nombrecomun, p_base, vitalidad, inclinacion, emplazamiento, alt_total, d_interferencia.descripinterferencia AS infraestructura, fact_imp_eco')
                 ->join('b_nombrecomun', 'b_nombrecomun.idnombrecomun = d_arbol.nombrecomun')
                 ->join('d_interferencia', 'd_interferencia.idarbol2 = d_arbol.idarbol2', 'left');
                 if(is_array($id)){

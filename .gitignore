@@ -20,6 +20,5 @@ assets/uploads/images/
 application/models/index.html
 application/views/index.html
 application/views/welcome_message.php
-application/views/errors/*
 license.txt
 *~
