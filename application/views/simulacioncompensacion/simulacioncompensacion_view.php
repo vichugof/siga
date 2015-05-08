@@ -110,7 +110,7 @@ and open the template in the editor.
                             </tr>
                         </thead>
                         <tr ng-repeat="post in posts">
-                            <th scope="row">{{post.idarbol}}</th>
+                            <th scope="row">{{post.idarbol2}}</th>
                             <td>{{post.nombrecomun}}</td>
                             <td>{{post.alt_total}}</td>
                             <td>{{post.factorAlturaTotal}}</td>
